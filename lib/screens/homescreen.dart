@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:coffeeshop_app/data/dummydata.dart';
 import 'package:coffeeshop_app/models/coffeecard.dart';
 import 'package:coffeeshop_app/theme/app_theme.dart';
+import 'package:iconly/iconly.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,19 +28,19 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: isDarkMode ? AppColors.darkCard : Colors.white,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(IconlyBold.home),
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
+              icon: Icon(IconlyBold.heart),
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart_outlined),
+              icon: Icon(IconlyBold.buy),
               label: '',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
+              icon: Icon(IconlyBold.profile),
               label: '',
             ),
           ],
@@ -70,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                               color: theme.textTheme.bodyLarge?.color,
                             ),
                           ),
-                          Icon(Icons.keyboard_arrow_down,
+                          Icon(IconlyLight.arrow_down_2,
                               color: theme.textTheme.bodyLarge?.color),
                         ],
                       ),
@@ -78,7 +79,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   CircleAvatar(
                     backgroundColor: AppColors.primaryColor,
-                    child: const Icon(Icons.notifications_none,
+                    child: const Icon(IconlyLight.notification,
                         color: Colors.white),
                   ),
                 ],
@@ -95,7 +96,8 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    icon: Icon(Icons.search, color: theme.iconTheme.color),
+                    icon:
+                        Icon(IconlyLight.search, color: theme.iconTheme.color),
                     hintText: 'Search coffee',
                     hintStyle: TextStyle(color: theme.hintColor),
                     border: InputBorder.none,
@@ -278,7 +280,7 @@ class HomeScreen extends StatelessWidget {
                   color: AppColors.primaryColor,
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
-                child: const Icon(Icons.add, color: Colors.white),
+                child: const Icon(IconlyBold.plus, color: Colors.white),
               )
             ],
           )
