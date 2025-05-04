@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:coffeeshop_app/screens/loginscreen.dart'; // update path as needed
-import 'package:coffeeshop_app/theme/app_theme.dart'; // if your theme is in a separate file
+import 'package:coffeeshop_app/state/theme_state.dart'; // access themeState
+import 'package:coffeeshop_app/screens/loginscreen.dart';
+import 'package:coffeeshop_app/theme/app_theme.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,38 +12,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isDarkMode = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTheme();
-  }
-
-  Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    });
-  }
-
-  Future<void> _toggleTheme(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', value);
-    setState(() {
-      isDarkMode = value;
-    });
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -70,8 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Center(
             child: Text(
               'Coffee Lover',
-              style: theme.textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Center(
@@ -82,14 +51,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 32),
 
-          // Dark Mode Toggle
+          /// Dark Mode Toggle
           ListTile(
             leading: const Icon(IconlyLight.show),
             title: const Text('Dark Mode'),
             trailing: Switch(
-              value: isDarkMode,
+              value: isDark,
               activeColor: AppColors.primaryColor,
-              onChanged: (val) => _toggleTheme(val),
+              onChanged: (val) {
+                themeState.toggleTheme();
+              },
             ),
           ),
 
@@ -103,6 +74,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 }

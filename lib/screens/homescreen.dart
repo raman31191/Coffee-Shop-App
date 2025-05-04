@@ -2,7 +2,6 @@ import 'package:coffeeshop_app/screens/cart.dart';
 import 'package:coffeeshop_app/screens/favouritesScreen.dart';
 import 'package:coffeeshop_app/screens/profilescreen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:coffeeshop_app/data/dummydata.dart';
 import 'package:coffeeshop_app/models/coffeecard.dart';
 import 'package:coffeeshop_app/theme/app_theme.dart';
@@ -63,177 +62,275 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+final List<String> categories = [
+  'All Coffee',
+  'Macchiato',
+  'Latte',
+  'Americano',
+  'Cappuccino',
+  'Espresso'
+];
+
+// --- Filter Logic ---
+class CoffeeFilterState {
+  final ValueNotifier<int> selectedIndex = ValueNotifier<int>(0);
+
+  List<CoffeeModel> get filteredList {
+    if (selectedIndex.value == 0) {
+      return coffeeList;
+    } else {
+      final selectedCategory = categories[selectedIndex.value];
+      return coffeeList
+          .where((coffee) => coffee.title
+              .toLowerCase()
+              .contains(selectedCategory.toLowerCase()))
+          .toList();
+    }
+  }
+
+  void selectCategory(int index) {
+    selectedIndex.value = index;
+  }
+}
+
 // Extracted Home Content as its own widget
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
+
+  @override
+  State<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  final CoffeeFilterState filterState = CoffeeFilterState();
+
+  @override
+  void dispose() {
+    filterState.selectedIndex.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+    return Stack(
+      children: [
+        // Gradient background layer (bottom)
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 200, // fade height (adjust as needed)
+          child: IgnorePointer(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.5), // semi-transparent black
+                    Colors.transparent, // smoothly fades out
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Location Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                // Location Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Location', style: TextStyle(color: theme.hintColor)),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'New Delhi, India',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Text('Location',
+                            style: TextStyle(color: theme.hintColor)),
+                        Row(
+                          children: [
+                            Text(
+                              'New Delhi, India',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Icon(IconlyLight.arrow_down_2,
+                                color: theme.iconTheme.color),
+                          ],
                         ),
-                        Icon(IconlyLight.arrow_down_2,
-                            color: theme.iconTheme.color),
                       ],
+                    ),
+                    CircleAvatar(
+                      backgroundColor: theme.colorScheme.primary,
+                      child:
+                          Icon(IconlyLight.notification, color: Colors.white),
                     ),
                   ],
                 ),
-                CircleAvatar(
-                  backgroundColor: theme.colorScheme.primary,
-                  child: Icon(IconlyLight.notification, color: Colors.white),
+
+                const SizedBox(height: 20),
+
+                // Search Bar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color:
+                        isDarkMode ? AppColors.darkCard : AppColors.lightBeige,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      icon: Icon(IconlyLight.search,
+                          color: theme.iconTheme.color),
+                      hintText: 'Search coffee',
+                      hintStyle: TextStyle(color: theme.hintColor),
+                      border: InputBorder.none,
+                    ),
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Promo Banner
+                Container(
+                  height: 160,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: const DecorationImage(
+                      image: AssetImage('assets/images/Cafe_latte.png'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.6),
+                          Colors.transparent
+                        ],
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                      ),
+                    ),
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text('Promo',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Buy one get\none FREE',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontSize: 22,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Category Selector
+                SizedBox(
+                  height: 36,
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: filterState.selectedIndex,
+                    builder: (context, selectedIndex, _) {
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          return _buildCategoryChip(
+                            categories[index],
+                            selectedIndex == index,
+                            theme,
+                            () => filterState.selectCategory(index),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Coffee Grid
+                Expanded(
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: filterState.selectedIndex,
+                    builder: (context, _, __) {
+                      final filtered = filterState.filteredList;
+                      return GridView.builder(
+                        itemCount: filtered.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 0.68,
+                        ),
+                        itemBuilder: (ctx, index) {
+                          final coffee = filtered[index];
+                          return _buildCoffeeCard(coffee, theme);
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
-
-            const SizedBox(height: 20),
-
-            // Search Bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.darkCard : AppColors.lightBeige,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  icon: Icon(IconlyLight.search, color: theme.iconTheme.color),
-                  hintText: 'Search coffee',
-                  hintStyle: TextStyle(color: theme.hintColor),
-                  border: InputBorder.none,
-                ),
-                style: theme.textTheme.bodyLarge,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Promo Banner
-            Container(
-              height: 160,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/Cafe_latte.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    colors: [Colors.black.withOpacity(0.6), Colors.transparent],
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                  ),
-                ),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text('Promo',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Buy one get\none FREE',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          fontSize: 22,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Category Filters
-            SizedBox(
-              height: 36,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildCategoryChip('All Coffee', true, theme),
-                  _buildCategoryChip('Macchiato', false, theme),
-                  _buildCategoryChip('Latte', false, theme),
-                  _buildCategoryChip('Americano', false, theme),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Coffee Grid
-            Expanded(
-              child: GridView.builder(
-                itemCount: coffeeList.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.68,
-                ),
-                itemBuilder: (ctx, index) {
-                  final coffee = coffeeList[index];
-                  return _buildCoffeeCard(coffee, theme);
-                },
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildCategoryChip(String label, bool selected, ThemeData theme) {
+  Widget _buildCategoryChip(
+      String label, bool selected, ThemeData theme, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: Chip(
-        label: Text(
-          label,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: selected ? Colors.white : theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Chip(
+          label: Text(
+            label,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: selected ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          backgroundColor: selected ? theme.colorScheme.primary : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          side: BorderSide(color: theme.colorScheme.primary),
         ),
-        backgroundColor:
-            selected ? theme.colorScheme.primary : theme.colorScheme.secondary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
@@ -299,5 +396,3 @@ class HomeContent extends StatelessWidget {
     );
   }
 }
-
-// Placeholder Screens
