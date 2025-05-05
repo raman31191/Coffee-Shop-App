@@ -6,6 +6,8 @@ import 'package:coffeeshop_app/data/dummydata.dart';
 import 'package:coffeeshop_app/models/coffeecard.dart';
 import 'package:coffeeshop_app/theme/app_theme.dart';
 import 'package:iconly/iconly.dart';
+import 'package:coffeeshop_app/screens/productdetailscreen.dart';
+import 'package:coffeeshop_app/state/cart_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,15 +16,18 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+void _onCheckoutSuccess() {
+  // You can put your logic here for handling a successful checkout
+  print("Checkout was successful!");
+}
+
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-
+  List<CoffeeModel> emptyCart = [];
   final List<Widget> _screens = [
     const HomeContent(),
     const FavouriteScreen(),
-    const CartScreen(
-      cartItems: [],
-    ),
+    CartScreen(onCheckoutSuccess: _onCheckoutSuccess),
     const ProfileScreen(),
   ];
 
@@ -71,16 +76,15 @@ final List<String> categories = [
   'Espresso'
 ];
 
-// --- Filter Logic ---
 class CoffeeFilterState {
   final ValueNotifier<int> selectedIndex = ValueNotifier<int>(0);
 
   List<CoffeeModel> get filteredList {
     if (selectedIndex.value == 0) {
-      return coffeeList;
+      return coffeeProducts;
     } else {
       final selectedCategory = categories[selectedIndex.value];
-      return coffeeList
+      return coffeeProducts
           .where((coffee) => coffee.title
               .toLowerCase()
               .contains(selectedCategory.toLowerCase()))
@@ -93,7 +97,6 @@ class CoffeeFilterState {
   }
 }
 
-// Extracted Home Content as its own widget
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
 
@@ -114,14 +117,14 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
+
     return Stack(
       children: [
-        // Gradient background layer (bottom)
         Positioned(
           top: 0,
           left: 0,
           right: 0,
-          height: 200, // fade height (adjust as needed)
+          height: 200,
           child: IgnorePointer(
             child: Container(
               decoration: BoxDecoration(
@@ -129,15 +132,14 @@ class _HomeContentState extends State<HomeContent> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.5), // semi-transparent black
-                    Colors.transparent, // smoothly fades out
+                    Colors.black.withOpacity(0.5),
+                    Colors.transparent,
                   ],
                 ),
               ),
             ),
           ),
         ),
-
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -336,62 +338,162 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildCoffeeCard(CoffeeModel coffee, ThemeData theme) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.secondary,
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    return Card(
+      elevation: isDarkMode ? 0 : 2,
+      color: isDarkMode ? AppColors.darkCard : theme.colorScheme.secondary,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              coffee.imagePath,
-              height: 100,
-              width: double.infinity,
-              fit: BoxFit.cover,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailScreen(product: coffee),
             ),
-          ),
-          const SizedBox(height: 8),
-          // Name
-          Text(
-            coffee.title,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          // Description
-          Text(
-            coffee.subtitle,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.hintColor,
-            ),
-          ),
-          const SizedBox(height: 6),
-          // Price and Add
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '\$ ${coffee.price}',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              Hero(
+                tag: 'product-${coffee.id}',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    coffee.imagePath,
+                    height: 100,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: 8),
+              Text(
+                coffee.title,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
-                child: const Icon(IconlyBold.plus, color: Colors.white),
-              )
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                coffee.subtitle,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: isDarkMode ? Colors.grey[400] : theme.hintColor,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text(
+                      '\$ ${coffee.price}',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      CartState().addToCart(coffee);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.all(20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          backgroundColor:
+                              isDarkMode ? AppColors.darkCard : Colors.white,
+                          elevation: 4,
+                          content: Row(
+                            children: [
+                              Icon(
+                                IconlyBold.tick_square,
+                                color: theme.colorScheme.primary,
+                                size: 28,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Added to Cart',
+                                      style:
+                                          theme.textTheme.bodyLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      coffee.title,
+                                      style:
+                                          theme.textTheme.bodySmall?.copyWith(
+                                        color: isDarkMode
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  IconlyLight.close_square,
+                                  color: isDarkMode
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: const Icon(
+                        IconlyBold.plus,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

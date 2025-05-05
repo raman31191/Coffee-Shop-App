@@ -16,8 +16,8 @@ class CoffeeFilterState {
 
   List<CoffeeModel> get filteredList {
     final selectedCategory = _getCategory(selectedIndex.value);
-    if (selectedCategory == 'All Coffee') return coffeeList;
-    return coffeeList.where((c) => c.category == selectedCategory).toList();
+    if (selectedCategory == 'All Coffee') return coffeeProducts;
+    return coffeeProducts.where((c) => c.category == selectedCategory).toList();
   }
 
   void selectCategory(int index) {

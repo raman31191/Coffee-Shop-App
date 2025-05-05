@@ -7,7 +7,6 @@ import 'package:coffeeshop_app/state/theme_state.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load theme mode from SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;
   themeState.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
