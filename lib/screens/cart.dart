@@ -50,7 +50,7 @@ class _CartScreenState extends State<CartScreen> {
           color: isDarkMode ? Colors.white : AppColors.textDark,
         ),
         leading: IconButton(
-          icon: const Icon(IconlyLight.arrow_left),
+          icon: const Icon(IconlyLight.arrow_left_circle),
           onPressed: () {
             Navigator.pushReplacement(
               context,

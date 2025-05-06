@@ -20,7 +20,7 @@ class FavouriteScreen extends StatelessWidget {
           isDarkMode ? AppColors.darkBackground : AppColors.lightBackground,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(IconlyLight.arrow_left),
+          icon: const Icon(IconlyLight.arrow_left_circle),
           onPressed: () {
             Navigator.pushReplacement(
               context,

@@ -179,24 +179,48 @@ class _HomeContentState extends State<HomeContent> {
 
                 const SizedBox(height: 20),
 
-                // Search Bar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color:
-                        isDarkMode ? AppColors.darkCard : AppColors.lightBeige,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      icon: Icon(IconlyLight.search,
-                          color: theme.iconTheme.color),
-                      hintText: 'Search coffee',
-                      hintStyle: TextStyle(color: theme.hintColor),
-                      border: InputBorder.none,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: isDarkMode
+                              ? AppColors.darkCard
+                              : AppColors.lightBeige,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            icon: Icon(
+                              IconlyLight.search,
+                              color: theme.iconTheme.color,
+                            ),
+                            hintText: 'Search coffee',
+                            hintStyle: TextStyle(color: theme.hintColor),
+                            border: InputBorder.none,
+                          ),
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                      ),
                     ),
-                    style: theme.textTheme.bodyLarge,
-                  ),
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          IconlyBold.filter,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 20),
@@ -207,7 +231,7 @@ class _HomeContentState extends State<HomeContent> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     image: const DecorationImage(
-                      image: AssetImage('assets/images/Cafe_latte.png'),
+                      image: AssetImage('assets/images/coffee_banner.png'),
                       fit: BoxFit.cover,
                     ),
                   ),

@@ -45,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // 👤 Name
             Center(
               child: Text(
-                'Coffee Lover',
+                'User',
                 style: GoogleFonts.sora(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Center(
               child: Text(
-                'user@coffee.com',
+                'user@example.com',
                 style: GoogleFonts.sora(
                   fontSize: 14,
                   color: colorScheme.onBackground.withOpacity(0.7),
@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 40),
 
-            // 🌙 Dark Mode Card
+            // 🌙 Dark Mode
             _buildCardTile(
               context: context,
               icon: IconlyLight.show,
@@ -79,7 +79,141 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 12),
 
-            // 🚪 Logout Card
+            // 📞 Contact Us
+            _buildCardTile(
+              context: context,
+              icon: Icons.phone_outlined,
+              title: 'Contact Us',
+              onTap: () {
+                // Add your contact logic here
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    final colorScheme = Theme.of(context).colorScheme;
+                    final textTheme = Theme.of(context).textTheme;
+
+                    return AlertDialog(
+                      backgroundColor: colorScheme.surface,
+                      titleTextStyle: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
+                      contentTextStyle: textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.8),
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      title: const Text('Contact Us'),
+                      content: const Text('Email us at support@coffeeshop.com'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'OK',
+                            style: textTheme.labelLarge
+                                ?.copyWith(color: colorScheme.primary),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // ℹ️ About Us
+            _buildCardTile(
+              context: context,
+              icon: Icons.info_outline,
+              title: 'About Us',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    final colorScheme = Theme.of(context).colorScheme;
+                    final textTheme = Theme.of(context).textTheme;
+
+                    return AlertDialog(
+                      backgroundColor: colorScheme.surface,
+                      titleTextStyle: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
+                      contentTextStyle: textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.8),
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      title: const Text('About Us'),
+                      content: const Text(
+                          'CoffeeShop App is your companion in finding the perfect coffee. '
+                          'We’re passionate about great taste and smooth experiences.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'OK',
+                            style: textTheme.labelLarge
+                                ?.copyWith(color: colorScheme.primary),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // 📄 Terms & Conditions
+            _buildCardTile(
+              context: context,
+              icon: Icons.description_outlined,
+              title: 'Terms & Conditions',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (_) {
+                    final colorScheme = Theme.of(context).colorScheme;
+                    final textTheme = Theme.of(context).textTheme;
+
+                    return AlertDialog(
+                      backgroundColor: colorScheme.surface,
+                      titleTextStyle: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
+                      contentTextStyle: textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.8),
+                      ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      title: const Text('Terms & Conditions'),
+                      content: const Text(
+                          'By using this app, you agree to our terms of service and privacy policies. '
+                          'Please read them carefully before proceeding.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'OK',
+                            style: textTheme.labelLarge
+                                ?.copyWith(color: colorScheme.primary),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // 🚪 Logout
             _buildCardTile(
               context: context,
               icon: IconlyLight.logout,
