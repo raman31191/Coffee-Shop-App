@@ -1,5 +1,5 @@
 import 'package:coffeeshop_app/screens/cart.dart';
-import 'package:coffeeshop_app/screens/favouritesScreen.dart';
+import 'package:coffeeshop_app/screens/favourites_screen.dart';
 import 'package:coffeeshop_app/screens/profilescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeeshop_app/data/dummydata.dart';

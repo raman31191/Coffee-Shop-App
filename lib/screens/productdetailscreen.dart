@@ -4,6 +4,7 @@ import 'package:coffeeshop_app/models/coffeecard.dart';
 import 'package:coffeeshop_app/theme/app_theme.dart';
 import 'package:iconly/iconly.dart';
 import 'package:coffeeshop_app/state/cart_state.dart';
+import 'package:coffeeshop_app/state/favourite_state.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final CoffeeModel product;
@@ -18,12 +19,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String? selectedSize;
   int quantity = 1;
   bool isFavorite = false; // Track favorite state
+  void _favoriteListener() {
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
     selectedSize =
         widget.product.sizes.isNotEmpty ? widget.product.sizes[0] : null;
+    FavoriteState().addListener(_favoriteListener);
+  }
+
+  @override
+  void dispose() {
+    // 👇 Add this to clean up listener
+    FavoriteState().removeListener(_favoriteListener);
+    super.dispose();
   }
 
   void addToCart() {
@@ -78,6 +90,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
     final product = widget.product;
+    // final favoriteState = FavoriteState(); // Get favorite state instance
+    //final isFavorite = favoriteState.isFavorite(widget.product);
 
     return Scaffold(
       appBar: AppBar(
@@ -90,11 +104,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              isFavorite ? IconlyBold.heart : IconlyLight.heart,
-              color: isFavorite ? Colors.red : null,
+              FavoriteState().isFavorite(product)
+                  ? IconlyBold.heart
+                  : IconlyLight.heart,
+              color: FavoriteState().isFavorite(product) ? Colors.red : null,
             ),
-            onPressed: toggleFavorite,
-          ),
+            onPressed: () {
+              FavoriteState().toggleFavorite(product);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    FavoriteState().isFavorite(product)
+                        ? 'Added to favorites'
+                        : 'Removed from favorites',
+                  ),
+                  duration: const Duration(seconds: 1),
+                ),
+              );
+            },
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -171,7 +199,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Description
             Text(
               "Description",
               style: theme.textTheme.titleLarge?.copyWith(
@@ -195,7 +222,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Size Selection
             Text(
               "Size",
               style: theme.textTheme.titleLarge?.copyWith(
