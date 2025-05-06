@@ -49,6 +49,11 @@ class AppState with ChangeNotifier {
   // - Light/dark theme toggle
 }
 
+## 🎨 Figma Design Reference  
+This app UI was inspired by the following Figma design:  
+👉 https://www.figma.com/design/dFYPpHoAiS25yxVaOV701e/Coffee-Shop-Mobile-App-Design--Community-?node-id=0-1&p=f&t=55JmjJCPate5UY4e-0
+
+
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
