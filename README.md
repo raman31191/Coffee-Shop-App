@@ -1,10 +1,53 @@
-# coffeeshop_app
+# ☕ Flutter Coffee Shop App
 
-A new Flutter project.
+A beautifully crafted Flutter app for a fictional coffee shop, offering a smooth shopping experience with seamless authentication, interactive product filtering, a smart cart system, and modern UI animations. Built with custom state management and inspired by a real-world UI/UX design.
 
-## Getting Started
+<img src="https://github.com/user-attachments/assets/f005fc08-7d19-4fd9-85ca-fd6845629eda" width="300"/>
 
-This project is a starting point for a Flutter application.
+## ✨ Features  
+
+### **1. Seamless Authentication Flow**  
+- Clean **onboarding screens** with coffee-themed illustrations  
+- **Login/Signup UI** with form validation  
+- Persistent session using `shared_preferences` (`loggedIn` flag)  
+- Protected routes for authenticated users  
+
+### **2. Interactive Coffee Menu**  
+- **Horizontal category chips** (Latte, Espresso, Cappuccino, etc.)  
+- **Product grid** with high-quality images, ratings, and prices  
+- **Real-time filtering** by coffee categories  
+- Responsive layout for all screen sizes  
+
+<img src="https://github.com/user-attachments/assets/ca6f38a3-3b84-4b1a-b4a1-27c081424267" width="300"/>
+
+### **3. Product Details with Animations**  
+- **Hero animations** for smooth image transitions  
+- **Size selector** (S/M/L) and **quantity stepper**  
+- **AnimatedSwitcher** for dynamic UI updates  
+- Detailed product descriptions and reviews  
+
+<img src="https://github.com/user-attachments/assets/831a8f04-aeb3-497f-adca-cebe1d2a8b11" width="300"/>
+
+### **4. Smart Cart System**  
+- **In-memory state persistence** during app usage  
+- Optionally backed by `shared_preferences`  
+- **Real-time quantity adjustment** (+/- buttons)  
+- Dynamic subtotal calculation  
+- One-tap checkout flow  
+
+<img src="https://github.com/user-attachments/assets/ab72a693-2342-4b82-881e-1553c572f024" width="300"/>
+<img src="https://github.com/user-attachments/assets/5d1ce5bb-63e5-40f0-bf14-1b2b1ee5e9fc" width="300"/>
+
+
+
+### **5. Custom State Management**  
+dart
+class AppState with ChangeNotifier {
+  // Handles: 
+  // - Cart items & quantities
+  // - User authentication state  
+  // - Light/dark theme toggle
+}
 
 A few resources to get you started if this is your first Flutter project:
 
